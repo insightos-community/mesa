@@ -1,6 +1,6 @@
 import hashlib, json, urllib.request
 from pathlib import Path
-base='https://github.com/insightos-community/mujoco/releases/download/musl-v3.4.0-2/'
+base='https://github.com/insightos-community/mujoco/releases/download/musl-v3.4.0-3/'
 checksums=urllib.request.urlopen(base+'SHA256SUMS',timeout=60).read().decode()
 checksums={line.split()[1]:line.split()[0] for line in checksums.splitlines()}
 records=[]
