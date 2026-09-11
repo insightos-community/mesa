@@ -1,0 +1,18 @@
+{
+  "project": "mesa",
+  "version": "25.2.7",
+  "upstream": "https://gitlab.freedesktop.org/mesa/mesa",
+  "upstream_tag": "mesa-25.2.7",
+  "upstream_commit": "461196a1c827769168304ff3f5b36360f16618ca",
+  "libraries": [
+    "libEGL.so.1"
+  ],
+  "gallium_drivers": [
+    "llvmpipe",
+    "iris",
+    "crocus",
+    "radeonsi",
+    "nouveau"
+  ],
+  "validation": "upstream tests and software EGL RGB/depth; hardware verification is separate"
+}
