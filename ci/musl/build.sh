@@ -19,4 +19,4 @@ cp /src/ci/musl/launch.py /src/ci/musl/probe.py prefix/share/insightos-mesa/
 printf '%s\n' llvmpipe,iris,crocus,radeonsi,nouveau > prefix/drivers.txt
 python /src/ci/musl/package.py
 python /src/ci/musl/fetch-test-wheel.py
-python -m pip download --only-binary=:all: --dest wheelhouse numpy==2.3.5 absl-py 'etils[epath]' glfw PyOpenGL
+python -m pip download --only-binary=:all: --dest wheelhouse numpy==2.3.5 absl-py 'etils[epath]' PyOpenGL
