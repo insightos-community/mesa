@@ -16,9 +16,40 @@ concurrency:
 
 env:
   MUSL_IMAGE: python:3.13-alpine3.23@sha256:75f27d686432419c9d42420b2b9ef605868c7a0682a6be10a6601fad46c2df01
+  MUJOCO_RELEASE: musl-v3.4.0-4
 
 jobs:
+  dependency:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Wait for the verified MuJoCo release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: insightos-community/mujoco
+        shell: bash
+        run: |
+          for attempt in $(seq 1 60); do
+            if gh release view "$MUJOCO_RELEASE" --json isDraft,assets > dependency.json 2>/dev/null; then
+              if python3 -c 'import json; r=json.load(open("dependency.json")); names={a["name"] for a in r["assets"]}; assert not r["isDraft"] and {"SHA256SUMS", "mujoco-3.4.0-cp313-cp313-musllinux_1_2_x86_64.whl", "glfw-2.10.2-py3-none-any.whl"} <= names'; then
+                echo "Verified release assets are available: $MUJOCO_RELEASE"
+                exit 0
+              fi
+            fi
+            if state=$(gh run list --workflow musl-release.yml --branch "$MUJOCO_RELEASE" --limit 1 --json status,conclusion --jq '.[0] | [.status, .conclusion] | join(":")' 2>/dev/null); then
+              case "$state" in
+                completed:success) ;;
+                completed:*) echo "::error::MuJoCo $MUJOCO_RELEASE failed: $state"; exit 1 ;;
+              esac
+            fi
+            echo "Waiting for MuJoCo $MUJOCO_RELEASE ($attempt/60)"
+            sleep 30
+          done
+          echo "::error::MuJoCo $MUJOCO_RELEASE was not published within 30 minutes"
+          exit 1
+
   build:
+    needs: dependency
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
@@ -32,6 +63,7 @@ jobs:
           echo "MUSL_WORK=$MUSL_WORK" >> "$GITHUB_ENV"
           mkdir -p "$MUSL_WORK"
           docker run --rm --cpus=2 --memory=12g --memory-swap=12g --pids-limit=1024 \
+            -e MUJOCO_RELEASE \
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/src,readonly" \
             --mount "type=bind,src=$MUSL_WORK,dst=/work" \
             "$MUSL_IMAGE" sh /src/ci/musl/build.sh

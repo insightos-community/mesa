@@ -1,6 +1,9 @@
-import hashlib, json, urllib.request
+import hashlib, json, os, re, urllib.request
 from pathlib import Path
-base='https://github.com/insightos-community/mujoco/releases/download/musl-v3.4.0-4/'
+tag=os.environ.get('MUJOCO_RELEASE', 'musl-v3.4.0-4')
+if not re.fullmatch(r'musl-v3\.4\.0-[1-9][0-9]*', tag):
+    raise ValueError('Invalid MuJoCo release tag: '+tag)
+base=f'https://github.com/insightos-community/mujoco/releases/download/{tag}/'
 checksums=urllib.request.urlopen(base+'SHA256SUMS',timeout=60).read().decode()
 checksums={line.split()[1]:line.split()[0] for line in checksums.splitlines()}
 records=[]
