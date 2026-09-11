@@ -1,0 +1,6 @@
+{
+  "upstream": "https://gitlab.freedesktop.org/mesa/mesa",
+  "tag": "mesa-25.2.7",
+  "commit": "461196a1c827769168304ff3f5b36360f16618ca",
+  "import": "Source snapshot of the upstream tag. GitHub does not provide native forks across hosting providers."
+}
