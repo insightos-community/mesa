@@ -55,3 +55,8 @@ documentation (`docs/submittingpatches.rst
 <https://docs.mesa3d.org/submittingpatches.html>`_).
 
 Note that Mesa uses gitlab for patches submission, review and discussions.
+
+Reproducible platform builds
+============================
+
+See `glibc, musl and macOS build instructions <README.build.md>`_ for pinned sources, scripts, tool requirements, local commands, CI reproduction and platform support boundaries.
